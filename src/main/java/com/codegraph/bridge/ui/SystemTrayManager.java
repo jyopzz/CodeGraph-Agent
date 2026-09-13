@@ -38,8 +38,7 @@ public class SystemTrayManager {
             ConfigurableApplicationContext context,
             CliProcessService cliProcessService,
             WindowsStartupService startupService,
-            AgentRestartService restartService
-    ) {
+            AgentRestartService restartService) {
         this.context = context;
         this.cliProcessService = cliProcessService;
         this.startupService = startupService;
@@ -60,21 +59,18 @@ public class SystemTrayManager {
             createTray();
 
             System.out.println(
-                    "CodeGraph system tray initialized successfully."
-            );
+                    "CodeGraph system tray initialized successfully.");
 
         } catch (Exception e) {
 
             System.err.println(
-                    "Failed to initialize CodeGraph system tray."
-            );
+                    "Failed to initialize CodeGraph system tray.");
 
             e.printStackTrace();
 
             showError(
                     "Unable to initialize CodeGraph system tray.",
-                    e.getMessage()
-            );
+                    e.getMessage());
         }
     }
 
@@ -82,8 +78,7 @@ public class SystemTrayManager {
 
         if (trayIcon != null) {
             System.out.println(
-                    "System tray is already initialized."
-            );
+                    "System tray is already initialized.");
             return;
         }
 
@@ -93,26 +88,22 @@ public class SystemTrayManager {
 
         PopupMenu menu = createTrayMenu();
 
-        TrayIcon newTrayIcon =
-                new TrayIcon(
-                        image,
-                        APP_NAME,
-                        menu
-                );
+        TrayIcon newTrayIcon = new TrayIcon(
+                image,
+                APP_NAME,
+                menu);
 
         newTrayIcon.setImageAutoSize(true);
 
         newTrayIcon.addActionListener(
-                event -> openDashboard()
-        );
+                event -> openDashboard());
 
         tray.add(newTrayIcon);
 
         trayIcon = newTrayIcon;
 
         System.out.println(
-                "Tray icon added to Windows notification area."
-        );
+                "Tray icon added to Windows notification area.");
     }
 
     private PopupMenu createTrayMenu() {
@@ -122,33 +113,27 @@ public class SystemTrayManager {
         MenuItem open = new MenuItem("Open");
 
         open.addActionListener(
-                event -> openDashboard()
-        );
+                event -> openDashboard());
 
         menu.add(open);
 
-        MenuItem update =
-                new MenuItem("Check for Update");
+        MenuItem update = new MenuItem("Check for Update");
 
         update.addActionListener(
-                event -> checkForUpdate()
-        );
+                event -> checkForUpdate());
 
         menu.add(update);
 
         menu.addSeparator();
 
-        MenuItem restart =
-                new MenuItem("Restart Agent");
+        MenuItem restart = new MenuItem("Restart Agent");
 
         restart.addActionListener(
-                event -> restartAgent()
-        );
+                event -> restartAgent());
 
         menu.add(restart);
 
-        MenuItem port =
-                new MenuItem("Port: " + PORT);
+        MenuItem port = new MenuItem("Port: " + PORT);
 
         port.setEnabled(false);
 
@@ -156,12 +141,10 @@ public class SystemTrayManager {
 
         menu.addSeparator();
 
-        MenuItem exit =
-                new MenuItem("Exit");
+        MenuItem exit = new MenuItem("Exit");
 
         exit.addActionListener(
-                event -> exitApplication()
-        );
+                event -> exitApplication());
 
         menu.add(exit);
 
@@ -176,12 +159,10 @@ public class SystemTrayManager {
 
                 if (dashboard == null) {
 
-                    dashboard =
-                            new DashboardApp(
-                                    cliProcessService,
-                                    startupService,
-                                    this::exitApplication
-                            );
+                    dashboard = new DashboardApp(
+                            cliProcessService,
+                            startupService,
+                            this::exitApplication);
                 }
 
                 dashboard.show();
@@ -192,8 +173,7 @@ public class SystemTrayManager {
 
                 showError(
                         "Unable to open CodeGraph Agent dashboard.",
-                        e.getMessage()
-                );
+                        e.getMessage());
             }
         });
     }
@@ -205,29 +185,26 @@ public class SystemTrayManager {
             JOptionPane.showMessageDialog(
                     null,
                     """
-                    CodeGraph Agent
+                            CodeGraph Agent
 
-                    Current version: 1.0.0
+                            Current version: 1.0.0
 
-                    Update checking will be
-                    connected to the CodeGraph
-                    update service later.
-                    """,
+                            Update checking will be
+                            connected to the CodeGraph
+                            update service later.
+                            """,
                     APP_NAME,
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.INFORMATION_MESSAGE);
         });
     }
 
     private void restartAgent() {
 
-        int result =
-                JOptionPane.showConfirmDialog(
-                        null,
-                        "Restart CodeGraph Agent?",
-                        APP_NAME,
-                        JOptionPane.YES_NO_OPTION
-                );
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                "Restart CodeGraph Agent?",
+                APP_NAME,
+                JOptionPane.YES_NO_OPTION);
 
         if (result != JOptionPane.YES_OPTION) {
             return;
@@ -276,8 +253,7 @@ public class SystemTrayManager {
                     .remove(currentTrayIcon);
 
             System.out.println(
-                    "CodeGraph tray icon removed."
-            );
+                    "CodeGraph tray icon removed.");
 
         } catch (Exception e) {
 
@@ -291,8 +267,7 @@ public class SystemTrayManager {
 
     private void showError(
             String message,
-            String details
-    ) {
+            String details) {
 
         SwingUtilities.invokeLater(() -> {
 
@@ -300,8 +275,7 @@ public class SystemTrayManager {
                     null,
                     message + "\n\n" + details,
                     APP_NAME,
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         });
     }
 
@@ -309,12 +283,10 @@ public class SystemTrayManager {
 
         int size = 32;
 
-        BufferedImage image =
-                new BufferedImage(
-                        size,
-                        size,
-                        BufferedImage.TYPE_INT_ARGB
-                );
+        BufferedImage image = new BufferedImage(
+                size,
+                size,
+                BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = image.createGraphics();
 
@@ -322,8 +294,7 @@ public class SystemTrayManager {
 
             g.setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON
-            );
+                    RenderingHints.VALUE_ANTIALIAS_ON);
 
             g.setColor(new Color(25, 30, 38));
 
@@ -333,8 +304,7 @@ public class SystemTrayManager {
                     28,
                     28,
                     8,
-                    8
-            );
+                    8);
 
             g.setColor(new Color(0, 188, 212));
 
@@ -342,8 +312,7 @@ public class SystemTrayManager {
                     7,
                     7,
                     18,
-                    18
-            );
+                    18);
 
             g.setColor(new Color(25, 30, 38));
 
@@ -351,8 +320,7 @@ public class SystemTrayManager {
                     12,
                     12,
                     8,
-                    8
-            );
+                    8);
 
         } finally {
 

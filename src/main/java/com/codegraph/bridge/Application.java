@@ -24,11 +24,9 @@ public class Application {
 
         System.out.println("OS: " + System.getProperty("os.name"));
         System.out.println(
-                "Headless: " + GraphicsEnvironment.isHeadless()
-        );
+                "Headless: " + GraphicsEnvironment.isHeadless());
         System.out.println(
-                "SystemTray supported: " + SystemTray.isSupported()
-        );
+                "SystemTray supported: " + SystemTray.isSupported());
 
         boolean restarting = false;
 
@@ -39,8 +37,7 @@ public class Application {
             }
         }
 
-        SingleInstanceService singleInstanceService =
-                new SingleInstanceService();
+        SingleInstanceService singleInstanceService = new SingleInstanceService();
 
         boolean acquired;
 
@@ -56,8 +53,7 @@ public class Application {
         }
 
         Runtime.getRuntime().addShutdownHook(
-                new Thread(singleInstanceService::release)
-        );
+                new Thread(singleInstanceService::release));
 
         context = SpringApplication.run(Application.class, args);
 
@@ -66,8 +62,7 @@ public class Application {
         });
 
         // Start system tray
-        SystemTrayManager trayManager =
-                context.getBean(SystemTrayManager.class);
+        SystemTrayManager trayManager = context.getBean(SystemTrayManager.class);
 
         trayManager.initialize();
 

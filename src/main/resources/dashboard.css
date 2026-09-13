@@ -1,95 +1,339 @@
+/* =========================
+   Base
+   ========================= */
+
 .root {
-    -fx-font-family: "Segoe UI";
-    -fx-background-color: #f6f8fa;
+  -fx-font-family: "Segoe UI";
+  -fx-background-color: #f6f8fa;
 }
 
+/* =========================
+   Sidebar
+   ========================= */
+
 .sidebar {
-    -fx-background-color: #171b21;
+  -fx-background-color: #171b21;
 }
 
 .logo {
-    -fx-text-fill: #00bcd4;
-    -fx-font-size: 21px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 20 5;
+  -fx-text-fill: #00bcd4;
+  -fx-font-size: 21px;
+  -fx-font-weight: bold;
+  -fx-padding: 0 0 20 5;
 }
 
 .sidebar .separator {
-    -fx-opacity: 0.2;
+  -fx-opacity: 0.2;
 }
 
 .menu-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #c8cdd3;
-    -fx-font-size: 14px;
-    -fx-background-radius: 6px;
-    -fx-cursor: hand;
+  -fx-background-color: transparent;
+  -fx-text-fill: #c8cdd3;
+  -fx-font-size: 14px;
+  -fx-background-radius: 6px;
+  -fx-cursor: hand;
 }
 
 .menu-button:hover {
-    -fx-background-color: #252b33;
-    -fx-text-fill: white;
+  -fx-background-color: #252b33;
+  -fx-text-fill: white;
 }
 
 .exit-button {
-    -fx-text-fill: #ff8a8a;
+  -fx-text-fill: #ff8a8a;
 }
 
+/* =========================
+   Page
+   ========================= */
+
 .page-title {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #171b21;
+  -fx-font-size: 28px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #171b21;
 }
 
 .subtitle {
-    -fx-font-size: 14px;
-    -fx-text-fill: #6b7280;
+  -fx-font-size: 14px;
+  -fx-text-fill: #6b7280;
 }
 
+/* =========================
+   Cards
+   ========================= */
+
 .card {
-    -fx-background-color: white;
-    -fx-background-radius: 10px;
-    -fx-border-color: #e5e7eb;
-    -fx-border-radius: 10px;
+  -fx-background-color: white;
+  -fx-background-radius: 10px;
+  -fx-border-color: #e5e7eb;
+  -fx-border-radius: 10px;
 }
 
 .card-title {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #555b65;
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #555b65;
 }
 
 .card-description {
-    -fx-font-size: 12px;
-    -fx-text-fill: #7a8088;
+  -fx-font-size: 12px;
+  -fx-text-fill: #7a8088;
 }
 
 .status-running {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #16803c;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #16803c;
 }
 
 .status-warning {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #b7791f;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #b7791f;
 }
 
 .info-value {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #171b21;
+  -fx-font-size: 22px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #171b21;
 }
 
+/* =========================
+   Buttons
+   ========================= */
+
 .button {
-    -fx-background-color: #00a8bd;
-    -fx-text-fill: white;
-    -fx-background-radius: 6px;
-    -fx-padding: 9 18 9 18;
-    -fx-cursor: hand;
+  -fx-background-color: #00a8bd;
+  -fx-text-fill: white;
+  -fx-background-radius: 6px;
+  -fx-padding: 9 18 9 18;
+  -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: #008fa3;
+  -fx-background-color: #008fa3;
+}
+
+/* =========================
+   Theme
+   ========================= */
+
+.theme-light {
+  -fx-background-color: #cfd0d3;
+}
+
+.theme-dark {
+  -fx-background-color: #1e2228;
+}
+
+/* =========================
+   Light Theme
+   ========================= */
+
+.theme-light .sidebar {
+  -fx-background-color: #dbdbdb;
+}
+
+.theme-light .menu-button {
+  -fx-text-fill: #4b5563;
+}
+
+.theme-light .menu-button:hover {
+  -fx-background-color: #eef2f5;
+  -fx-text-fill: #171b21;
+}
+
+.theme-light .sidebar .separator {
+  -fx-opacity: 0.2;
+}
+
+/* =========================
+   Dark Theme - Sidebar
+   ========================= */
+
+.theme-dark .sidebar {
+  -fx-background-color: #171b21;
+}
+
+.theme-dark .menu-button {
+  -fx-text-fill: #c8cdd3;
+}
+
+.theme-dark .menu-button:hover {
+  -fx-background-color: #252b33;
+  -fx-text-fill: white;
+}
+
+.theme-dark .sidebar .separator {
+  -fx-opacity: 0.2;
+}
+
+/* =========================
+   Dark Theme - Page
+   ========================= */
+
+.theme-dark .page-title {
+  -fx-text-fill: #f1f3f5;
+}
+
+.theme-dark .subtitle {
+  -fx-text-fill: #aeb5bd;
+}
+
+/* =========================
+   Dark Theme - Cards
+   ========================= */
+
+.theme-dark .card {
+  -fx-background-color: #282d34;
+  -fx-border-color: #3a414a;
+}
+
+.theme-dark .card-title {
+  -fx-text-fill: #d5d9de;
+}
+
+.theme-dark .card-description {
+  -fx-text-fill: #aeb5bd;
+}
+
+.theme-dark .info-value {
+  -fx-text-fill: #f1f3f5;
+}
+
+/* =========================
+   Dark Theme - Settings
+   ========================= */
+
+.theme-dark .setting-label {
+  -fx-text-fill: #f1f3f5;
+}
+
+.theme-dark .setting-hint {
+  -fx-text-fill: #9da5ae;
+}
+
+/* =========================
+   Dark Theme - TextField
+   ========================= */
+
+.theme-dark .text-field {
+  -fx-background-color: #282d34;
+  -fx-text-fill: #f1f3f5;
+  -fx-prompt-text-fill: #7f8791;
+  -fx-border-color: #444b54;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+}
+
+.theme-dark .text-field:focused {
+  -fx-border-color: #00a8bd;
+}
+
+/* =========================
+   Dark Theme - ComboBox
+   ========================= */
+
+.theme-dark .combo-box {
+  -fx-background-color: #282d34;
+  -fx-text-fill: #f1f3f5;
+  -fx-border-color: #444b54;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+}
+
+.theme-dark .combo-box:hover {
+  -fx-border-color: #00a8bd;
+}
+
+.theme-dark .combo-box .list-cell {
+  -fx-background-color: #282d34;
+  -fx-text-fill: #f1f3f5;
+}
+
+.theme-dark .combo-box-popup .list-view {
+  -fx-background-color: #282d34;
+}
+
+.theme-dark .combo-box-popup .list-cell:hover {
+  -fx-background-color: #3a414a;
+}
+
+.theme-dark .combo-box-popup .list-cell:selected {
+  -fx-background-color: #00a8bd;
+  -fx-text-fill: white;
+}
+
+/* =========================
+   Dark Theme - CheckBox
+   ========================= */
+
+.theme-dark .check-box {
+  -fx-text-fill: #e6e9ed;
+}
+
+.theme-dark .check-box:disabled {
+  -fx-opacity: 1;
+  -fx-text-fill: #8f98a3;
+}
+
+.theme-dark .check-box .box {
+  -fx-background-color: #282d34;
+  -fx-border-color: #68717c;
+  -fx-border-radius: 3px;
+  -fx-background-radius: 3px;
+}
+
+.theme-dark .check-box:hover .box {
+  -fx-border-color: #00a8bd;
+}
+
+.theme-dark .check-box:selected .box {
+  -fx-background-color: #00a8bd;
+  -fx-border-color: #00a8bd;
+}
+
+.theme-dark .check-box:selected .mark {
+  -fx-background-color: white;
+}
+
+.theme-dark .check-box:disabled .box {
+  -fx-background-color: #252a30;
+  -fx-border-color: #505862;
+}
+
+.theme-dark .check-box:disabled:selected .box {
+  -fx-background-color: #3b6470;
+  -fx-border-color: #4c7d88;
+}
+
+.theme-dark .check-box:disabled:selected .mark {
+  -fx-background-color: #aeb5bd;
+}
+
+/* =========================
+   Version
+   ========================= */
+
+.version-label {
+  -fx-font-size: 14px;
+  -fx-text-fill: #555b65;
+}
+
+.theme-dark .version-label {
+  -fx-text-fill: #e1e5e9;
+}
+
+/* =========================
+   About
+   ========================= */
+
+.about-description {
+  -fx-font-size: 14px;
+  -fx-text-fill: #6b7280;
+  -fx-line-spacing: 4px;
+}
+
+.theme-dark .about-description {
+  -fx-text-fill: #c4cbd3;
 }

@@ -2,8 +2,6 @@ package com.codegraph.bridge.service;
 
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 public class AgentRestartService {
 
@@ -13,19 +11,16 @@ public class AgentRestartService {
 
             String javaHome = System.getProperty("java.home");
 
-            String javaExecutable =
-                    javaHome + "\\bin\\javaw.exe";
+            String javaExecutable = javaHome + "\\bin\\javaw.exe";
 
-            String classPath =
-                    System.getProperty("java.class.path");
+            String classPath = System.getProperty("java.class.path");
 
             ProcessBuilder processBuilder = new ProcessBuilder(
                     javaExecutable,
                     "-cp",
                     classPath,
                     "com.codegraph.bridge.Application",
-                    "--restart"
-            );
+                    "--restart");
 
             processBuilder.start();
 

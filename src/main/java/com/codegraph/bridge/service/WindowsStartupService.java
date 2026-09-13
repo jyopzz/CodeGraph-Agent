@@ -5,11 +5,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class WindowsStartupService {
 
-    private static final String APP_NAME =
-            "CodeGraphAgent";
+    private static final String APP_NAME = "CodeGraphAgent";
 
-    private static final String REGISTRY_KEY =
-            "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    private static final String REGISTRY_KEY = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 
     public boolean isWindows() {
         return System.getProperty("os.name")
@@ -25,16 +23,14 @@ public class WindowsStartupService {
 
         try {
 
-            Process process =
-                    new ProcessBuilder(
-                            "reg",
-                            "query",
-                            REGISTRY_KEY,
-                            "/v",
-                            APP_NAME
-                    )
-                            .redirectErrorStream(true)
-                            .start();
+            Process process = new ProcessBuilder(
+                    "reg",
+                    "query",
+                    REGISTRY_KEY,
+                    "/v",
+                    APP_NAME)
+                    .redirectErrorStream(true)
+                    .start();
 
             process.waitFor();
 
@@ -54,24 +50,21 @@ public class WindowsStartupService {
 
         try {
 
-            String launchCommand =
-                    buildLaunchCommand();
+            String launchCommand = buildLaunchCommand();
 
-            Process process =
-                    new ProcessBuilder(
-                            "reg",
-                            "add",
-                            REGISTRY_KEY,
-                            "/v",
-                            APP_NAME,
-                            "/t",
-                            "REG_SZ",
-                            "/d",
-                            launchCommand,
-                            "/f"
-                    )
-                            .redirectErrorStream(true)
-                            .start();
+            Process process = new ProcessBuilder(
+                    "reg",
+                    "add",
+                    REGISTRY_KEY,
+                    "/v",
+                    APP_NAME,
+                    "/t",
+                    "REG_SZ",
+                    "/d",
+                    launchCommand,
+                    "/f")
+                    .redirectErrorStream(true)
+                    .start();
 
             process.waitFor();
 
@@ -91,17 +84,15 @@ public class WindowsStartupService {
 
         try {
 
-            Process process =
-                    new ProcessBuilder(
-                            "reg",
-                            "delete",
-                            REGISTRY_KEY,
-                            "/v",
-                            APP_NAME,
-                            "/f"
-                    )
-                            .redirectErrorStream(true)
-                            .start();
+            Process process = new ProcessBuilder(
+                    "reg",
+                    "delete",
+                    REGISTRY_KEY,
+                    "/v",
+                    APP_NAME,
+                    "/f")
+                    .redirectErrorStream(true)
+                    .start();
 
             process.waitFor();
 
@@ -115,14 +106,11 @@ public class WindowsStartupService {
 
     private String buildLaunchCommand() {
 
-        String javaCommand =
-                System.getProperty("java.home")
-                        + "\\bin\\javaw.exe";
+        String javaCommand = System.getProperty("java.home")
+                + "\\bin\\javaw.exe";
 
-        String classPath =
-                System.getProperty(
-                        "java.class.path"
-                );
+        String classPath = System.getProperty(
+                "java.class.path");
 
         return "\"" + javaCommand + "\" "
                 + "-cp \""

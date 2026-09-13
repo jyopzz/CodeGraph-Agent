@@ -15,8 +15,7 @@ public class SingleInstanceService {
 
     private static final Path LOCK_FILE = Path.of(
             System.getProperty("java.io.tmpdir"),
-            "codegraph-agent.lock"
-    );
+            "codegraph-agent.lock");
 
     private FileChannel channel;
     private FileLock lock;
@@ -31,8 +30,7 @@ public class SingleInstanceService {
             channel = FileChannel.open(
                     LOCK_FILE,
                     StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE
-            );
+                    StandardOpenOption.WRITE);
 
             try {
                 lock = channel.tryLock();

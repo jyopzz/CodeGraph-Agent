@@ -14,10 +14,12 @@ import java.util.regex.Pattern;
 @Service
 public class CliProcessService {
 
-    // 1. On Windows, VS Code CLI is 'code.cmd' (located in AppData or Program Files)
+    // 1. On Windows, VS Code CLI is 'code.cmd' (located in AppData or Program
+    // Files)
     private final String executableName = "code.cmd";
 
-    public record CodeGraphInfo(boolean installed, String version, String path, String status) {}
+    public record CodeGraphInfo(boolean installed, String version, String path, String status) {
+    }
 
     public CodeGraphInfo detectInstallation() {
         String resolvedPath = findExecutableInPath(executableName);
@@ -36,8 +38,7 @@ public class CliProcessService {
                 true,
                 version != null ? version : "v1.0.0-detected",
                 resolvedPath,
-                "ready"
-        );
+                "ready");
     }
 
     public String runCommand(String command, List<String> args) throws Exception {
@@ -63,7 +64,8 @@ public class CliProcessService {
         Process process = pb.start();
 
         StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append(System.lineSeparator());
@@ -83,7 +85,8 @@ public class CliProcessService {
         try {
             // VS Code returns its version and commit SHA via -v / --version
             Process process = new ProcessBuilder(binaryPath, "--version").start();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 String versionLine = reader.readLine(); // Line 1 is the semver (e.g. 1.91.1)
                 process.waitFor(3, TimeUnit.SECONDS);
                 return versionLine != null ? versionLine.trim() : "installed";
