@@ -1,0 +1,8 @@
+@"
+.idea/
+target/
+*.iml
+.classpath
+.project
+.settings/
+"@ | Out-File -Encoding utf8 .gitignore
