@@ -1,61 +1,76 @@
 package com.codegraph.bridge;
 
+import com.codegraph.bridge.service.SingleInstanceService;
+import com.codegraph.bridge.ui.SystemTrayManager;
+import javafx.application.Platform;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.GraphicsEnvironment;
+import java.awt.SystemTray;
 
 @SpringBootApplication
 public class Application {
 
+    private static ConfigurableApplicationContext context;
+
     public static void main(String[] args) {
-        // Disables headless mode to enable Windows Tray rendering
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(Application.class)
-                .headless(false)
-                .run(args);
 
-        initSystemTray(context);
-    }
+        // IMPORTANT:
+        // CodeGraph Agent uses AWT System Tray.
+        // Must be configured before Spring/JavaFX initialization.
+        System.setProperty("java.awt.headless", "false");
 
-    private static void initSystemTray(ConfigurableApplicationContext context) {
-        if (!SystemTray.isSupported()) {
-            System.out.println("System tray is not supported on this operating system.");
+        System.out.println("OS: " + System.getProperty("os.name"));
+        System.out.println(
+                "Headless: " + GraphicsEnvironment.isHeadless()
+        );
+        System.out.println(
+                "SystemTray supported: " + SystemTray.isSupported()
+        );
+
+        boolean restarting = false;
+
+        for (String arg : args) {
+            if ("--restart".equalsIgnoreCase(arg)) {
+                restarting = true;
+                break;
+            }
+        }
+
+        SingleInstanceService singleInstanceService =
+                new SingleInstanceService();
+
+        boolean acquired;
+
+        if (restarting) {
+            acquired = singleInstanceService.acquireWithRetry(15_000);
+        } else {
+            acquired = singleInstanceService.acquire();
+        }
+
+        if (!acquired) {
+            System.out.println("CodeGraph Agent is already running.");
             return;
         }
 
-        try {
-            SystemTray tray = SystemTray.getSystemTray();
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(singleInstanceService::release)
+        );
 
-            // Draw a quick 16x16 icon programmatically for the tray
-            Image image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = (Graphics2D) image.getGraphics();
-            g2.setColor(new Color(0, 188, 212)); // Cyan primary accent
-            g2.fillOval(2, 2, 12, 12);
-            g2.dispose();
+        context = SpringApplication.run(Application.class, args);
 
-            PopupMenu popup = new PopupMenu();
+        // Start JavaFX toolkit
+        Platform.startup(() -> {
+        });
 
-            MenuItem statusItem = new MenuItem("CodeGraph Bridge (Port: 9870) - Active");
-            statusItem.setEnabled(false);
-            popup.add(statusItem);
+        // Start system tray
+        SystemTrayManager trayManager =
+                context.getBean(SystemTrayManager.class);
 
-            popup.addSeparator();
+        trayManager.initialize();
 
-            MenuItem exitItem = new MenuItem("Exit Application");
-            exitItem.addActionListener(e -> {
-                context.close();
-                System.exit(0);
-            });
-            popup.add(exitItem);
-
-            TrayIcon trayIcon = new TrayIcon(image, "CodeGraph Bridge Daemon", popup);
-            trayIcon.setImageAutoSize(true);
-            tray.add(trayIcon);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("CodeGraph Agent started.");
     }
 }
