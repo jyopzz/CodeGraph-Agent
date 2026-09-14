@@ -341,3 +341,8 @@
 .theme-dark .about-description {
   -fx-text-fill: #c4cbd3;
 }
+
+.port-error {
+    -fx-text-fill: #d32f2f;
+    -fx-font-size: 12px;
+}

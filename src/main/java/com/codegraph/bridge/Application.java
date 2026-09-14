@@ -1,5 +1,6 @@
 package com.codegraph.bridge;
 
+import com.codegraph.bridge.service.PortManager;
 import com.codegraph.bridge.service.SingleInstanceService;
 import com.codegraph.bridge.ui.SystemTrayManager;
 import javafx.application.Platform;
@@ -55,7 +56,26 @@ public class Application {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(singleInstanceService::release));
 
-        context = SpringApplication.run(Application.class, args);
+        /*
+         * Load the saved Agent port.
+         *
+         * Default port: 9870
+         * Allowed range: 1024 - 65535
+         */
+        PortManager portManager = new PortManager();
+
+        int configuredPort = portManager.getPort();
+
+        System.setProperty(
+                "server.port",
+                String.valueOf(configuredPort));
+
+        System.out.println(
+                "Agent HTTP port: " + configuredPort);
+
+        context = SpringApplication.run(
+                Application.class,
+                args);
 
         Platform.setImplicitExit(false);
 

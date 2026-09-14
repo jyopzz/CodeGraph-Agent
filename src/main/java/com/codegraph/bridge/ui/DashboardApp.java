@@ -1,6 +1,8 @@
 package com.codegraph.bridge.ui;
 
+import com.codegraph.bridge.service.AgentRestartService;
 import com.codegraph.bridge.service.CliProcessService;
+import com.codegraph.bridge.service.PortManager;
 import com.codegraph.bridge.service.WindowsStartupService;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -19,8 +21,6 @@ public class DashboardApp {
 
         private static final String VERSION = "1.0.0";
 
-        private static final int PORT = 9870;
-
         private final CliProcessService cliProcessService;
         private final Runnable exitAction;
 
@@ -33,6 +33,9 @@ public class DashboardApp {
         private Label agentStatus;
 
         private Label codeGraphStatus;
+
+        private final PortManager portManager;
+        private final AgentRestartService restartService;
 
         private final WindowsStartupService startupService;
 
@@ -52,10 +55,14 @@ public class DashboardApp {
         public DashboardApp(
                         CliProcessService cliProcessService,
                         WindowsStartupService startupService,
+                        PortManager portManager,
+                        AgentRestartService restartService,
                         Runnable exitAction) {
 
                 this.cliProcessService = cliProcessService;
                 this.startupService = startupService;
+                this.portManager = portManager;
+                this.restartService = restartService;
                 this.exitAction = exitAction;
         }
 
@@ -307,7 +314,7 @@ public class DashboardApp {
                                 .add(
                                                 createInfoCard(
                                                                 "Port",
-                                                                String.valueOf(PORT)));
+                                                                String.valueOf(portManager.getPort())));
 
                 systemCards.getChildren()
                                 .add(
@@ -532,12 +539,37 @@ public class DashboardApp {
                 Label port = new Label(
                                 "Agent Port");
 
-                port.getStyleClass().add("agent-port");
+                port.getStyleClass().add(
+                                "agent-port");
 
                 TextField portField = new TextField(
-                                String.valueOf(PORT));
+                                String.valueOf(
+                                                portManager.getPort()));
 
                 portField.setMaxWidth(250);
+
+                Label portHint = new Label(
+                                "The local HTTP port used by CodeGraph Agent.");
+
+                portHint.getStyleClass().add(
+                                "setting-hint");
+
+                Label portError = new Label();
+
+                portError.getStyleClass().add(
+                                "port-error");
+
+                portError.setVisible(false);
+                portError.setManaged(false);
+
+                Button savePort = new Button(
+                                "Save Port");
+
+                savePort.setOnAction(
+                                event -> savePort(
+                                                portField,
+                                                portError,
+                                                savePort));
 
                 page.getChildren()
                                 .addAll(
@@ -547,7 +579,10 @@ public class DashboardApp {
                                                 new Separator(),
                                                 startup,
                                                 port,
-                                                portField);
+                                                portField,
+                                                portHint,
+                                                portError,
+                                                savePort);
 
                 root.setCenter(page);
 
@@ -727,5 +762,84 @@ public class DashboardApp {
                                 message);
 
                 alert.showAndWait();
+        }
+
+        private void savePort(
+                        TextField portField,
+                        Label portError,
+                        Button savePort) {
+
+                String value = portField.getText();
+
+                int newPort;
+
+                try {
+
+                        newPort = Integer.parseInt(
+                                        value.trim());
+
+                } catch (NumberFormatException e) {
+
+                        showPortError(
+                                        portError,
+                                        "Port must be a valid number.");
+
+                        return;
+                }
+
+                if (!PortManager.isValidPort(newPort)) {
+
+                        showPortError(
+                                        portError,
+                                        "Port must be between 1024 and 65535.");
+
+                        return;
+                }
+
+                int currentPort = portManager.getPort();
+
+                if (newPort == currentPort) {
+
+                        showInformation(
+                                        "Port Settings",
+                                        "Port " + newPort
+                                                        + " is already configured.");
+
+                        return;
+                }
+
+                boolean saved = portManager.savePort(newPort);
+
+                if (!saved) {
+
+                        showPortError(
+                                        portError,
+                                        "Unable to save the port.");
+
+                        return;
+                }
+
+                savePort.setDisable(true);
+
+                showInformation(
+                                "Port Changed",
+                                "The Agent port has been changed from "
+                                                + currentPort
+                                                + " to "
+                                                + newPort
+                                                + ".\n\n"
+                                                + "The Agent will restart to apply the new port.");
+
+                restartService.restart();
+        }
+
+        private void showPortError(
+                        Label errorLabel,
+                        String message) {
+
+                errorLabel.setText(message);
+
+                errorLabel.setVisible(true);
+                errorLabel.setManaged(true);
         }
 }

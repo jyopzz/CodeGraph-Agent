@@ -2,6 +2,7 @@ package com.codegraph.bridge.ui;
 
 import com.codegraph.bridge.service.AgentRestartService;
 import com.codegraph.bridge.service.CliProcessService;
+import com.codegraph.bridge.service.PortManager;
 import com.codegraph.bridge.service.WindowsStartupService;
 import javafx.application.Platform;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -30,6 +31,7 @@ public class SystemTrayManager {
     private final CliProcessService cliProcessService;
     private final WindowsStartupService startupService;
     private final AgentRestartService restartService;
+    private final PortManager portManager;
 
     private volatile TrayIcon trayIcon;
     private DashboardApp dashboard;
@@ -38,11 +40,13 @@ public class SystemTrayManager {
             ConfigurableApplicationContext context,
             CliProcessService cliProcessService,
             WindowsStartupService startupService,
-            AgentRestartService restartService) {
+            AgentRestartService restartService,
+            PortManager portManager) {
         this.context = context;
         this.cliProcessService = cliProcessService;
         this.startupService = startupService;
         this.restartService = restartService;
+        this.portManager = portManager;
     }
 
     public void initialize() {
@@ -153,29 +157,31 @@ public class SystemTrayManager {
 
     private void openDashboard() {
 
-    Platform.runLater(() -> {
+        Platform.runLater(() -> {
 
-        try {
+            try {
 
-            if (dashboard == null) {
-                dashboard = new DashboardApp(
-                        cliProcessService,
-                        startupService,
-                        this::exitApplication);
+                if (dashboard == null) {
+                    dashboard = new DashboardApp(
+                            cliProcessService,
+                            startupService,
+                            portManager,
+                            restartService,
+                            this::exitApplication);
+                }
+
+                dashboard.show();
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                showError(
+                        "Unable to open CodeGraph Agent dashboard.",
+                        e.getMessage());
             }
-
-            dashboard.show();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            showError(
-                    "Unable to open CodeGraph Agent dashboard.",
-                    e.getMessage());
-        }
-    });
-}
+        });
+    }
 
     private void checkForUpdate() {
 
