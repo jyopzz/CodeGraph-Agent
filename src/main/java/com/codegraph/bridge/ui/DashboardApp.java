@@ -61,19 +61,22 @@ public class DashboardApp {
 
         public void show() {
 
-                Platform.runLater(() -> {
+                if (!Platform.isFxApplicationThread()) {
+                        Platform.runLater(this::show);
+                        return;
+                }
 
-                        if (stage == null) {
+                if (stage == null) {
+                        createStage();
+                }
 
-                                createStage();
-                        }
+                if (stage.isIconified()) {
+                        stage.setIconified(false);
+                }
 
-                        stage.show();
-
-                        stage.toFront();
-
-                        stage.requestFocus();
-                });
+                stage.show();
+                stage.toFront();
+                stage.requestFocus();
         }
 
         private void createStage() {
@@ -526,11 +529,6 @@ public class DashboardApp {
                                                         });
                                                 });
 
-                CheckBox minimized = new CheckBox(
-                                "Start Agent minimized to system tray");
-
-                minimized.setSelected(true);
-
                 Label port = new Label(
                                 "Agent Port");
 
@@ -548,7 +546,6 @@ public class DashboardApp {
                                                 themeHint,
                                                 new Separator(),
                                                 startup,
-                                                minimized,
                                                 port,
                                                 portField);
 

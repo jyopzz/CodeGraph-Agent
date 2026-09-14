@@ -153,30 +153,29 @@ public class SystemTrayManager {
 
     private void openDashboard() {
 
-        Platform.runLater(() -> {
+    Platform.runLater(() -> {
 
-            try {
+        try {
 
-                if (dashboard == null) {
-
-                    dashboard = new DashboardApp(
-                            cliProcessService,
-                            startupService,
-                            this::exitApplication);
-                }
-
-                dashboard.show();
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-                showError(
-                        "Unable to open CodeGraph Agent dashboard.",
-                        e.getMessage());
+            if (dashboard == null) {
+                dashboard = new DashboardApp(
+                        cliProcessService,
+                        startupService,
+                        this::exitApplication);
             }
-        });
-    }
+
+            dashboard.show();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Unable to open CodeGraph Agent dashboard.",
+                    e.getMessage());
+        }
+    });
+}
 
     private void checkForUpdate() {
 

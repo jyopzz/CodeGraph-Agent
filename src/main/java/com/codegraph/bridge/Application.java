@@ -57,6 +57,8 @@ public class Application {
 
         context = SpringApplication.run(Application.class, args);
 
+        Platform.setImplicitExit(false);
+
         // Start JavaFX toolkit
         Platform.startup(() -> {
         });

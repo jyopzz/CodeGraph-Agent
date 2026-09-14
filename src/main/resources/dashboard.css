@@ -334,6 +334,10 @@
   -fx-line-spacing: 4px;
 }
 
+.theme-dark .agent-port{
+    -fx-text-fill: #c4cbd3;
+}
+
 .theme-dark .about-description {
   -fx-text-fill: #c4cbd3;
 }
