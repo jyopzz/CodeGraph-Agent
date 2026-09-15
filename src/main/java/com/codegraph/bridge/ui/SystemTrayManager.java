@@ -4,6 +4,7 @@ import com.codegraph.bridge.service.AgentRestartService;
 import com.codegraph.bridge.service.CliProcessService;
 import com.codegraph.bridge.service.PortManager;
 import com.codegraph.bridge.service.WindowsStartupService;
+import com.codegraph.bridge.service.PairingService;
 import javafx.application.Platform;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class SystemTrayManager {
     private final WindowsStartupService startupService;
     private final AgentRestartService restartService;
     private final PortManager portManager;
+    private final PairingService pairingService;
 
     private volatile TrayIcon trayIcon;
     private DashboardApp dashboard;
@@ -41,12 +43,15 @@ public class SystemTrayManager {
             CliProcessService cliProcessService,
             WindowsStartupService startupService,
             AgentRestartService restartService,
-            PortManager portManager) {
+            PortManager portManager,
+            PairingService pairingService) {
+
         this.context = context;
         this.cliProcessService = cliProcessService;
         this.startupService = startupService;
         this.restartService = restartService;
         this.portManager = portManager;
+        this.pairingService = pairingService;
     }
 
     public void initialize() {
@@ -167,6 +172,7 @@ public class SystemTrayManager {
                             startupService,
                             portManager,
                             restartService,
+                            pairingService,
                             this::exitApplication);
                 }
 

@@ -346,3 +346,9 @@
     -fx-text-fill: #d32f2f;
     -fx-font-size: 12px;
 }
+
+.pairing-code {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 6px;
+}

@@ -4,13 +4,20 @@ import com.codegraph.bridge.service.AgentRestartService;
 import com.codegraph.bridge.service.CliProcessService;
 import com.codegraph.bridge.service.PortManager;
 import com.codegraph.bridge.service.WindowsStartupService;
+import com.codegraph.bridge.service.PairingService;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,8 +41,11 @@ public class DashboardApp {
 
         private Label codeGraphStatus;
 
+        private Timeline pairingCountdown;
+
         private final PortManager portManager;
         private final AgentRestartService restartService;
+        private final PairingService pairingService;
 
         private final WindowsStartupService startupService;
 
@@ -57,12 +67,14 @@ public class DashboardApp {
                         WindowsStartupService startupService,
                         PortManager portManager,
                         AgentRestartService restartService,
+                        PairingService pairingService,
                         Runnable exitAction) {
 
                 this.cliProcessService = cliProcessService;
                 this.startupService = startupService;
                 this.portManager = portManager;
                 this.restartService = restartService;
+                this.pairingService = pairingService;
                 this.exitAction = exitAction;
         }
 
@@ -330,9 +342,154 @@ public class DashboardApp {
                                                 pageTitle,
                                                 subtitle,
                                                 statusCards,
+                                                createPairingCard(),
                                                 systemCards);
 
                 return container;
+        }
+
+        private VBox createPairingCard() {
+
+                VBox card = createCard();
+
+                card.setPrefWidth(Double.MAX_VALUE);
+
+                Label title = new Label("Agent Pairing");
+                title.getStyleClass().add("card-title");
+
+                Label description = new Label(
+                                "Use this code to pair the CodeGraph web application with this Agent.");
+
+                description.getStyleClass().add("card-description");
+                description.setWrapText(true);
+
+                Label code = new Label(
+                                pairingService.getPairingCode());
+
+                code.getStyleClass().add("pairing-code");
+
+                Button copy = new Button("Copy");
+
+                copy.setOnAction(event -> {
+                        copyToClipboard(code.getText());
+
+                        showInformation(
+                                        "Pairing Code",
+                                        "Pairing code copied to clipboard.");
+                });
+
+                Label expires = new Label();
+                expires.getStyleClass().add("setting-hint");
+
+                Button refresh = new Button("Refresh Code");
+
+                refresh.setOnAction(event -> {
+
+                        pairingService.regeneratePairingCode();
+
+                        code.setText(
+                                        pairingService.getPairingCode());
+
+                        updatePairingExpiry(
+                                        expires,
+                                        copy,
+                                        refresh);
+                });
+
+                HBox codeRow = new HBox(
+                                20,
+                                code,
+                                copy,
+                                refresh);
+
+                codeRow.setAlignment(Pos.CENTER_LEFT);
+
+                card.getChildren().addAll(
+                                title,
+                                description,
+                                codeRow,
+                                expires);
+
+                updatePairingExpiry(
+                                expires,
+                                copy,
+                                refresh);
+
+                startPairingCountdown(
+                                expires,
+                                copy,
+                                refresh);
+
+                return card;
+        }
+
+        private void copyToClipboard(String value) {
+
+                ClipboardContent content = new ClipboardContent();
+
+                content.putString(value);
+
+                Clipboard.getSystemClipboard()
+                                .setContent(content);
+        }
+
+        private void updatePairingExpiry(
+                        Label expires,
+                        Button copy,
+                        Button refresh) {
+
+                String expiryText = formatPairingExpiry(
+                                pairingService.getPairingCodeExpiresAt());
+
+                expires.setText(expiryText);
+
+                boolean expired = "Expired".equals(expiryText);
+
+                copy.setDisable(expired);
+                refresh.setDisable(false);
+        }
+
+        private void startPairingCountdown(
+                        Label expires,
+                        Button copy,
+                        Button refresh) {
+
+                if (pairingCountdown != null) {
+                        pairingCountdown.stop();
+                }
+
+                pairingCountdown = new Timeline(
+                                new KeyFrame(
+                                                Duration.seconds(1),
+                                                event -> updatePairingExpiry(
+                                                                expires,
+                                                                copy,
+                                                                refresh)));
+
+                pairingCountdown.setCycleCount(
+                                Timeline.INDEFINITE);
+
+                pairingCountdown.play();
+        }
+
+        private String formatPairingExpiry(
+                        java.time.Instant expiresAt) {
+
+                long remainingSeconds = java.time.Duration.between(
+                                java.time.Instant.now(),
+                                expiresAt).getSeconds();
+
+                if (remainingSeconds <= 0) {
+                        return "Expired";
+                }
+
+                long minutes = remainingSeconds / 60;
+                long seconds = remainingSeconds % 60;
+
+                return String.format(
+                                "Expires in %d:%02d",
+                                minutes,
+                                seconds);
         }
 
         private VBox createAgentCard() {

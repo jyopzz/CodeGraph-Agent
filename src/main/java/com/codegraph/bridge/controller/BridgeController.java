@@ -9,7 +9,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class BridgeController {
 
     private final CliProcessService cliProcessService;
