@@ -32,15 +32,6 @@ public class AuthController {
                 this.sessionService = sessionService;
         }
 
-        @GetMapping("/status")
-        public ResponseEntity<?> status() {
-
-                return ResponseEntity.ok(Map.of(
-                                "pairingRequired", true,
-                                "pairingCodeExpiresAt",
-                                pairingService.getPairingCodeExpiresAt()));
-        }
-
         public record PairRequest(
                         String applicationCode,
                         String code,
@@ -152,25 +143,6 @@ public class AuthController {
                 KeyFactory keyFactory = KeyFactory.getInstance("EC");
 
                 PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-                byte[] rawSignature = Base64.getUrlDecoder().decode(signatureBase64Url);
-
-                byte[] derSignature = rawEcdsaToDer(rawSignature);
-
-                Signature verifier = Signature.getInstance("SHA256withECDSA");
-
-                verifier.initVerify(publicKey);
-
-                verifier.update(
-                                challenge.getBytes(StandardCharsets.UTF_8));
-
-                return verifier.verify(derSignature);
-        }
-
-        private boolean verifySignature(
-                        PublicKey publicKey,
-                        String challenge,
-                        String signatureBase64Url) throws Exception {
 
                 byte[] rawSignature = Base64.getUrlDecoder().decode(signatureBase64Url);
 
@@ -316,11 +288,8 @@ public class AuthController {
                                         .status(401)
                                         .body(
                                                         Map.of(
-                                                                        "success",
-                                                                        false,
-
-                                                                        "error",
-                                                                        e.getMessage()));
+                                                                        "success", false,
+                                                                        "error", e.getMessage()));
                 }
         }
 

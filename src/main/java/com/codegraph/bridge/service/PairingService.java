@@ -30,11 +30,14 @@ public class PairingService {
 
         private final Path pairedBrowserFile;
         private final AgentIdentityService agentIdentityService;
+        private final SessionService sessionService;
 
         public PairingService(
-                        AgentIdentityService agentIdentityService) {
+                        AgentIdentityService agentIdentityService,
+                        SessionService sessionService) {
 
                 this.agentIdentityService = agentIdentityService;
+                this.sessionService = sessionService;
 
                 Path agentDirectory = Path.of(
                                 System.getProperty("user.home"),
@@ -140,7 +143,6 @@ public class PairingService {
                 String pairedPublicKey = getPairedPublicKey();
 
                 if (pairedPublicKey == null) {
-
                         throw new IllegalArgumentException(
                                         "No browser is paired with this Agent");
                 }
@@ -152,6 +154,10 @@ public class PairingService {
                         throw new IllegalArgumentException(
                                         "Browser is not paired with this Agent");
                 }
+
+                // Reconnect is valid.
+                // Invalidate all previously issued session tokens.
+                sessionService.revokeAll();
 
                 return createPendingChallenge(publicKey);
         }
