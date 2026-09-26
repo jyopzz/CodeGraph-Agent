@@ -355,69 +355,127 @@ public class DashboardApp {
                 card.setPrefWidth(Double.MAX_VALUE);
 
                 Label title = new Label("Agent Pairing");
-                title.getStyleClass().add("card-title");
+
+                title.getStyleClass()
+                                .add("card-title");
 
                 Label description = new Label(
-                                "Use this code to pair the CodeGraph web application with this Agent.");
+                                "Use the Application Code and OTP to pair the CodeGraph web application with this Agent.");
 
-                description.getStyleClass().add("card-description");
+                description.getStyleClass()
+                                .add("card-description");
+
                 description.setWrapText(true);
 
-                Label code = new Label(
-                                pairingService.getPairingCode());
+                /*
+                 * Permanent Application Code
+                 */
+                Label applicationCodeLabel = new Label("Application Code");
 
-                code.getStyleClass().add("pairing-code");
+                applicationCodeLabel.getStyleClass()
+                                .add("setting-label");
 
-                Button copy = new Button("Copy");
+                Label applicationCode = new Label(
+                                pairingService.getApplicationCode());
 
-                copy.setOnAction(event -> {
-                        copyToClipboard(code.getText());
+                applicationCode.getStyleClass()
+                                .add("pairing-code");
+
+                Button copyApplicationCode = new Button("Copy");
+
+                copyApplicationCode.setOnAction(event -> {
+
+                        copyToClipboard(
+                                        applicationCode.getText());
 
                         showInformation(
-                                        "Pairing Code",
-                                        "Pairing code copied to clipboard.");
+                                        "Application Code",
+                                        "Application code copied to clipboard.");
                 });
 
-                Label expires = new Label();
-                expires.getStyleClass().add("setting-hint");
+                HBox applicationCodeRow = new HBox(
+                                20,
+                                applicationCode,
+                                copyApplicationCode);
 
-                Button refresh = new Button("Refresh Code");
+                applicationCodeRow.setAlignment(
+                                Pos.CENTER_LEFT);
+
+                /*
+                 * Existing OTP
+                 */
+                Label otpLabel = new Label("OTP");
+
+                otpLabel.getStyleClass()
+                                .add("setting-label");
+
+                Label otp = new Label(
+                                pairingService.getPairingCode());
+
+                otp.getStyleClass()
+                                .add("pairing-code");
+
+                Button copyOtp = new Button("Copy");
+
+                Label expires = new Label();
+
+                expires.getStyleClass()
+                                .add("setting-hint");
+
+                Button refresh = new Button("Refresh OTP");
+
+                copyOtp.setOnAction(event -> {
+
+                        copyToClipboard(
+                                        otp.getText());
+
+                        showInformation(
+                                        "OTP",
+                                        "OTP copied to clipboard.");
+                });
 
                 refresh.setOnAction(event -> {
 
                         pairingService.regeneratePairingCode();
 
-                        code.setText(
+                        otp.setText(
                                         pairingService.getPairingCode());
 
                         updatePairingExpiry(
                                         expires,
-                                        copy,
+                                        copyOtp,
                                         refresh);
                 });
 
-                HBox codeRow = new HBox(
+                HBox otpRow = new HBox(
                                 20,
-                                code,
-                                copy,
+                                otp,
+                                copyOtp,
                                 refresh);
 
-                codeRow.setAlignment(Pos.CENTER_LEFT);
+                otpRow.setAlignment(
+                                Pos.CENTER_LEFT);
 
                 card.getChildren().addAll(
                                 title,
                                 description,
-                                codeRow,
+
+                                applicationCodeLabel,
+                                applicationCodeRow,
+
+                                otpLabel,
+                                otpRow,
+
                                 expires);
 
                 updatePairingExpiry(
                                 expires,
-                                copy,
+                                copyOtp,
                                 refresh);
 
                 startPairingCountdown(
                                 expires,
-                                copy,
+                                copyOtp,
                                 refresh);
 
                 return card;

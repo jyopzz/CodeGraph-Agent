@@ -29,8 +29,12 @@ public class PairingService {
         private final Map<String, PendingPairing> pendingPairings = new ConcurrentHashMap<>();
 
         private final Path pairedBrowserFile;
+        private final AgentIdentityService agentIdentityService;
 
-        public PairingService() {
+        public PairingService(
+                        AgentIdentityService agentIdentityService) {
+
+                this.agentIdentityService = agentIdentityService;
 
                 Path agentDirectory = Path.of(
                                 System.getProperty("user.home"),
@@ -39,6 +43,11 @@ public class PairingService {
                 this.pairedBrowserFile = agentDirectory.resolve(PAIRED_BROWSER_FILE);
 
                 regeneratePairingCode();
+        }
+
+        public String getApplicationCode() {
+
+                return agentIdentityService.getApplicationCode();
         }
 
         public synchronized void regeneratePairingCode() {
@@ -61,19 +70,40 @@ public class PairingService {
         }
 
         public Instant getPairingCodeExpiresAt() {
-    return pairingCodeExpiresAt;
-}
+                return pairingCodeExpiresAt;
+        }
 
         /*
          * Initial pairing using the 6-digit pairing code.
          */
         public synchronized PairingChallenge createChallenge(
+                        String applicationCode,
                         String suppliedCode,
                         String publicKey) {
 
                 validatePublicKey(publicKey);
 
+                if (applicationCode == null ||
+                                applicationCode.isBlank()) {
+
+                        throw new IllegalArgumentException(
+                                        "Application code is required");
+                }
+
+                if (!secureEquals(
+                                agentIdentityService.getApplicationCode(),
+                                applicationCode)) {
+
+                        throw new IllegalArgumentException(
+                                        "Invalid application code");
+                }
+
+                /*
+                 * Existing OTP validation starts here.
+                 * Do not change the existing OTP behavior.
+                 */
                 if (suppliedCode == null) {
+
                         throw new IllegalArgumentException(
                                         "Pairing code is required");
                 }
