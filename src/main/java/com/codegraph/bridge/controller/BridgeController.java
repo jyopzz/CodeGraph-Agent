@@ -30,20 +30,34 @@ public class BridgeController {
                         "installed", info.installed(),
                         "version", info.version() != null ? info.version() : "N/A",
                         "path", info.path() != null ? info.path() : "",
-                        "status", info.status()
-                )
-        ));
+                        "status", info.status())));
     }
-
-    public record ScriptRequest(String command, List<String> args) {}
 
     @PostMapping("/run-script")
-    public ResponseEntity<?> runScript(@RequestBody ScriptRequest request) {
+    public ResponseEntity<?> openCommandPrompt() {
+
         try {
-            String output = cliProcessService.runCommand(request.command(), request.args());
-            return ResponseEntity.ok(Map.of("success", true, "output", output));
+
+            cliProcessService.openCommandPrompt();
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "success", true,
+                            "message",
+                            "CodeGraph Agent Command Prompt opened successfully"));
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", e.getMessage()));
+
+            return ResponseEntity
+                    .status(500)
+                    .body(
+                            Map.of(
+                                    "success", false,
+                                    "error",
+                                    e.getMessage() != null
+                                            ? e.getMessage()
+                                            : "Unable to open Command Prompt"));
         }
     }
+
 }
